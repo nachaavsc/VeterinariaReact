@@ -49,12 +49,13 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-      <CampoFormulario label="Nombre de la Mascota" error={errores.nombre}>
-        <Input value={nombre} onChange={(e) => setNombre(e.target.value)} tieneError={!!errores.nombre} />
+      <CampoFormulario label="Nombre de la Mascota" htmlFor="nombre" error={errores.nombre}>
+        <Input id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} tieneError={!!errores.nombre} />
       </CampoFormulario>
 
-      <CampoFormulario label="Especie">
+      <CampoFormulario label="Especie" htmlFor="especie">
         <Select
+          id="especie"
           opciones={[
             { label: 'Perro', value: 'Perro' },
             { label: 'Gato', value: 'Gato' },
@@ -66,20 +67,21 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
         />
       </CampoFormulario>
 
-      <CampoFormulario label="Raza" error={errores.raza}>
-        <Input value={raza} onChange={(e) => setRaza(e.target.value)} tieneError={!!errores.raza} />
+      <CampoFormulario label="Raza" htmlFor="raza" error={errores.raza}>
+        <Input id="raza" value={raza} onChange={(e) => setRaza(e.target.value)} tieneError={!!errores.raza} />
       </CampoFormulario>
 
-      <CampoFormulario label="Nombre del Dueño" error={errores.dueno}>
-        <Input value={dueno} onChange={(e) => setDueno(e.target.value)} tieneError={!!errores.dueno} />
+      <CampoFormulario label="Nombre del Dueño" htmlFor="dueno" error={errores.dueno}>
+        <Input id="dueno" value={dueno} onChange={(e) => setDueno(e.target.value)} tieneError={!!errores.dueno} />
       </CampoFormulario>
 
-      <CampoFormulario label="Email del Dueño" error={errores.emailDueno}>
-        <Input type="email" value={emailDueno} onChange={(e) => setEmailDueno(e.target.value)} tieneError={!!errores.emailDueno} />
+      <CampoFormulario label="Email del Dueño" htmlFor="emailDueno" error={errores.emailDueno}>
+        <Input id="emailDueno" type="email" value={emailDueno} onChange={(e) => setEmailDueno(e.target.value)} tieneError={!!errores.emailDueno} />
       </CampoFormulario>
 
-      <CampoFormulario label="Estado de Atención">
+      <CampoFormulario label="Estado de Atención" htmlFor="estado">
         <Select
+          id="estado"
           opciones={[
             { label: 'Pendiente', value: 'Pendiente' },
             { label: 'En Tratamiento', value: 'En Tratamiento' },
@@ -90,8 +92,9 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
         />
       </CampoFormulario>
 
-      <CampoFormulario label="Observaciones / Descripción">
+      <CampoFormulario label="Observaciones / Descripción" htmlFor="descripcion">
         <textarea
+          id="descripcion"
           className="form-control"
           rows={3}
           value={descripcion}
