@@ -9,7 +9,7 @@ export const Registro: React.FC = () => {
   const [exito, setExito] = useState(false);
 
   const manejarGuardar = (datos: MascotaInput) => {
-    petsRepository.create(datos);
+    petsRepository.crear(datos);
     setExito(true);
     setTimeout(() => navigate('/admin'), 1200);
   };

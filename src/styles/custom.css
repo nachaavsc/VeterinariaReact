@@ -1,0 +1,64 @@
+/*
+ * Personalización de la paleta de Bootstrap para Veterinaria San Marcos.
+ * Se carga DESPUÉS de bootstrap.min.css en main.tsx para poder
+ * sobrescribir sus clases sin tocar los archivos de node_modules.
+ */
+
+:root {
+  --color-verde: #2e7d32;
+  --color-verde-oscuro: #1b5e20;
+  --color-morado: #6a1b9a;
+  --color-morado-oscuro: #4a148c;
+}
+
+/* ---------- Navbar institucional en verde ---------- */
+.navbar-veterinaria {
+  background-color: var(--color-verde) !important;
+}
+
+/* ---------- Botones principales en morado ---------- */
+/* Se sobrescribe .btn-primary directamente: así todos los botones
+   "principales" del sitio (Agendar Cita, Guardar Registro, etc.)
+   adoptan el morado institucional sin tener que tocar cada uso. */
+.btn-primary {
+  background-color: var(--color-morado);
+  border-color: var(--color-morado);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-morado-oscuro);
+  border-color: var(--color-morado-oscuro);
+}
+
+/* Clase explícita por si se necesita el morado fuera de btn-primary */
+.btn-purple {
+  background-color: var(--color-morado);
+  border-color: var(--color-morado);
+  color: #fff;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-purple:hover,
+.btn-purple:focus {
+  background-color: var(--color-morado-oscuro);
+  border-color: var(--color-morado-oscuro);
+  color: #fff;
+}
+
+/* ---------- Detalles varios ---------- */
+.card-equipo img {
+  height: 220px;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-verde);
+  color: #fff;
+  font-size: 3rem;
+  font-weight: 700;
+}

@@ -7,32 +7,40 @@ import type { Mascota } from '../types';
 
 export const Admin: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
-  const [porEliminar, setPorEliminar] = useState<Mascota | null>(null);
-  // Se usa para forzar un re-render tras mutar el repositorio en memoria.
-  const [, forzarActualizacion] = useState(0);
+  const [idAEliminar, setIdAEliminar] = useState<string | null>(null);
+  // El repositorio vive en memoria fuera del estado de React; esta
+  // "versión" se incrementa tras eliminar para forzar el re-render.
+  const [version, setVersion] = useState(0);
 
-  const mascotasFiltradas = petsRepository.search(busqueda);
+  const mascotas: Mascota[] = petsRepository.buscar(busqueda);
+
+  const solicitarEliminacion = (id: string) => {
+    setIdAEliminar(id);
+  };
 
   const confirmarEliminacion = () => {
-    if (!porEliminar) return;
-    petsRepository.remove(porEliminar.id);
-    setPorEliminar(null);
-    forzarActualizacion((n) => n + 1);
+    if (idAEliminar) {
+      petsRepository.eliminar(idAEliminar);
+      setIdAEliminar(null);
+      setVersion(version + 1);
+    }
   };
 
   return (
     <div>
-      <h2 className="mb-4 text-center">Administración de Mascotas</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Panel de Administración de Mascotas</h2>
+      </div>
+
       <BarraBusqueda valor={busqueda} alCambiar={setBusqueda} />
-      <TablaMascotas
-        mascotas={mascotasFiltradas}
-        alEliminar={(mascota) => setPorEliminar(mascota)}
-      />
+
+      <TablaMascotas mascotas={mascotas} alEliminar={solicitarEliminacion} />
+
       <Confirmacion
-        mostrar={porEliminar !== null}
-        mensaje={`¿Seguro que deseas eliminar el registro de "${porEliminar?.nombre}"?`}
+        mostrar={idAEliminar !== null}
+        mensaje="¿Estás seguro de que deseas eliminar este registro de la base de datos?"
         alConfirmar={confirmarEliminacion}
-        alCancelar={() => setPorEliminar(null)}
+        alCancelar={() => setIdAEliminar(null)}
       />
     </div>
   );

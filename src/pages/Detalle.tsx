@@ -6,7 +6,7 @@ import type { Atencion } from '../types';
 
 export const Detalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const mascota = id ? petsRepository.getById(id) : undefined;
+  const mascota = id ? petsRepository.obtenerPorId(id) : undefined;
 
   if (!mascota) {
     return (

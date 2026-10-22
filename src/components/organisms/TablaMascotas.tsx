@@ -6,19 +6,22 @@ import { Boton } from '../atoms/Boton';
 
 interface TablaMascotasProps {
   mascotas: Mascota[];
-  alEliminar: (mascota: Mascota) => void;
+  alEliminar: (id: string) => void;
 }
 
-/** Tabla administrativa con todas las mascotas registradas. */
 export const TablaMascotas: React.FC<TablaMascotasProps> = ({ mascotas, alEliminar }) => {
   if (mascotas.length === 0) {
-    return <p className="text-muted">No hay mascotas que coincidan con la búsqueda.</p>;
+    return (
+      <div className="alert alert-info text-center my-4">
+        No se encontraron mascotas registradas o coincidentes con la búsqueda.
+      </div>
+    );
   }
 
   return (
-    <div className="table-responsive">
-      <table className="table table-hover align-middle">
-        <thead>
+    <div className="table-responsive shadow-sm rounded">
+      <table className="table table-hover align-middle mb-0 bg-white">
+        <thead className="table-primary">
           <tr>
             <th>Nombre</th>
             <th>Especie / Raza</th>
@@ -28,16 +31,29 @@ export const TablaMascotas: React.FC<TablaMascotasProps> = ({ mascotas, alElimin
           </tr>
         </thead>
         <tbody>
-          {mascotas.map((mascota) => (
-            <tr key={mascota.id}>
-              <td className="fw-bold">{mascota.nombre}</td>
-              <td>{mascota.especie} · {mascota.raza}</td>
-              <td>{mascota.dueno}</td>
-              <td><Estado estado={mascota.estado} /></td>
+          {mascotas.map((m) => (
+            <tr key={m.id}>
+              <td className="fw-bold">{m.nombre}</td>
+              <td>{m.especie} - <span className="text-muted">{m.raza}</span></td>
+              <td>
+                {m.dueno}
+                <br />
+                <small className="text-muted">{m.emailDueno}</small>
+              </td>
+              <td>
+                <Estado estado={m.estado} />
+              </td>
               <td className="text-end">
                 <div className="d-flex gap-2 justify-content-end">
-                  <Link to={`/detalle/${mascota.id}`} className="btn btn-outline-primary btn-sm">Ver</Link>
-                  <Boton texto="Eliminar" variante="danger" className="btn-sm" onClick={() => alEliminar(mascota)} />
+                  <Link to={`/detalle/${m.id}`} className="btn btn-sm btn-outline-primary">
+                    Ver Detalle
+                  </Link>
+                  <Boton
+                    variante="danger"
+                    texto="Eliminar"
+                    className="btn-sm"
+                    onClick={() => alEliminar(m.id)}
+                  />
                 </div>
               </td>
             </tr>

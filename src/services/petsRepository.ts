@@ -8,33 +8,32 @@ const MASCOTAS_INICIALES: Mascota[] = [
 
 let listaMascotas: Mascota[] = [...MASCOTAS_INICIALES];
 
-/** Acceso a los datos de mascotas. Hoy en memoria; pensado para poder
- *  reemplazarse por una API real sin tocar a los componentes que lo usan. */
+
 export const petsRepository = {
-  getAll: (): Mascota[] => [...listaMascotas],
+  obtenerTodas: (): Mascota[] => [...listaMascotas],
 
-  getById: (id: string): Mascota | undefined => listaMascotas.find((m) => m.id === id),
+  obtenerPorId: (id: string): Mascota | undefined => listaMascotas.find((m) => m.id === id),
 
-  create: (nuevaMascota: MascotaInput): Mascota => {
+  crear: (nuevaMascota: MascotaInput): Mascota => {
     const creada: Mascota = { ...nuevaMascota, id: Date.now().toString() };
     listaMascotas.push(creada);
     return creada;
   },
 
-  update: (id: string, campos: Partial<MascotaInput>): Mascota | null => {
+  actualizar: (id: string, campos: Partial<MascotaInput>): Mascota | null => {
     const indice = listaMascotas.findIndex((m) => m.id === id);
     if (indice === -1) return null;
     listaMascotas[indice] = { ...listaMascotas[indice], ...campos };
     return listaMascotas[indice];
   },
 
-  remove: (id: string): boolean => {
+  eliminar: (id: string): boolean => {
     const largoInicial = listaMascotas.length;
     listaMascotas = listaMascotas.filter((m) => m.id !== id);
     return listaMascotas.length < largoInicial;
   },
 
-  search: (criterio: string): Mascota[] => {
+  buscar: (criterio: string): Mascota[] => {
     const q = criterio.toLowerCase().trim();
     if (!q) return [...listaMascotas];
     return listaMascotas.filter((m) =>
@@ -44,7 +43,7 @@ export const petsRepository = {
     );
   },
 
-  reset: (): void => {
+  reiniciar: (): void => {
     listaMascotas = [...MASCOTAS_INICIALES];
   }
 };
