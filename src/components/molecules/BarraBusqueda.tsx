@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from '../Atomos/Input';
+import { Input } from '../atoms/Input';
 
 interface BarraBusquedaProps {
   valor: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ErrorMensajes } from '../Atomos/ErrorMensaje';
+import { ErrorMensajes } from '../atoms/ErrorMensaje';
 
 interface CampoFormularioProps {
   label: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Boton } from '../Atomos/Boton';
+import { Boton } from '../atoms/Boton';
 
 interface ConfirmacionProps {
   mostrar: boolean;

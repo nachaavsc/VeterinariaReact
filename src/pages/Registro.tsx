@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FormularioMascotas } from '../components/Organismo/FormularioMascotas';
-import { repositorioMascotas } from '../services/repositorioMascotas';
-import { MascotaEntrada } from '../services/tipos';
+import { FormularioMascotas } from '../components/organisms/FormularioMascotas';
+import { petsRepository } from '../services/petsRepository';
+import type { MascotaInput } from '../types';
 
 export const Registro: React.FC = () => {
   const navigate = useNavigate();
   const [exito, setExito] = useState(false);
 
-  const manejarGuardar = (datos: MascotaEntrada) => {
-    repositorioMascotas.crear(datos);
+  const manejarGuardar = (datos: MascotaInput) => {
+    petsRepository.create(datos);
     setExito(true);
     setTimeout(() => navigate('/admin'), 1200);
   };

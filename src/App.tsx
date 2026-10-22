@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Navbar } from './components/Organismo/Navbar';
-import { PiePagina } from './components/Organismo/PiePagina';
-import { Inicio } from './Paginas/Inicio';
-import { Registro } from './Paginas/Registro';
-import { Admin } from './Paginas/Admin';
-import { Detalle } from './Paginas/Detalle';
-import { Contacto } from './Paginas/Contacto';
+import { Navbar } from './components/organisms/Navbar';
+import { PiePagina } from './components/organisms/PiePagina';
+import { Inicio } from './pages/Inicio';
+import { Registro } from './pages/Registro';
+import { Admin } from './pages/Admin';
+import { Detalle } from './pages/Detalle';
+import { Contacto } from './pages/Contacto';
 
 export const App: React.FC = () => (
   <BrowserRouter>

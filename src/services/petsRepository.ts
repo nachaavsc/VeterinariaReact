@@ -1,4 +1,4 @@
-import { Mascota, MascotaEntrada } from './tipos';
+import type { Mascota, MascotaInput } from '../types';
 
 const MASCOTAS_INICIALES: Mascota[] = [
   { id: '1', nombre: 'Max', especie: 'Perro', raza: 'Golden Retriever', dueno: 'Juan Pérez', emailDueno: 'juan@mail.com', estado: 'Atendido', descripcion: 'Control anual al día.' },
@@ -8,41 +8,43 @@ const MASCOTAS_INICIALES: Mascota[] = [
 
 let listaMascotas: Mascota[] = [...MASCOTAS_INICIALES];
 
-export const repositorioMascotas = {
-  obtenerTodas: (): Mascota[] => [...listaMascotas],
+/** Acceso a los datos de mascotas. Hoy en memoria; pensado para poder
+ *  reemplazarse por una API real sin tocar a los componentes que lo usan. */
+export const petsRepository = {
+  getAll: (): Mascota[] => [...listaMascotas],
 
-  obtenerPorId: (id: string): Mascota | undefined => listaMascotas.find(m => m.id === id),
+  getById: (id: string): Mascota | undefined => listaMascotas.find((m) => m.id === id),
 
-  crear: (nuevaMascota: MascotaEntrada): Mascota => {
+  create: (nuevaMascota: MascotaInput): Mascota => {
     const creada: Mascota = { ...nuevaMascota, id: Date.now().toString() };
     listaMascotas.push(creada);
     return creada;
   },
 
-  actualizar: (id: string, campos: Partial<MascotaEntrada>): Mascota | null => {
-    const indice = listaMascotas.findIndex(m => m.id === id);
+  update: (id: string, campos: Partial<MascotaInput>): Mascota | null => {
+    const indice = listaMascotas.findIndex((m) => m.id === id);
     if (indice === -1) return null;
     listaMascotas[indice] = { ...listaMascotas[indice], ...campos };
     return listaMascotas[indice];
   },
 
-  eliminar: (id: string): boolean => {
+  remove: (id: string): boolean => {
     const largoInicial = listaMascotas.length;
-    listaMascotas = listaMascotas.filter(m => m.id !== id);
+    listaMascotas = listaMascotas.filter((m) => m.id !== id);
     return listaMascotas.length < largoInicial;
   },
 
-  buscar: (criterio: string): Mascota[] => {
+  search: (criterio: string): Mascota[] => {
     const q = criterio.toLowerCase().trim();
     if (!q) return [...listaMascotas];
-    return listaMascotas.filter(m =>
+    return listaMascotas.filter((m) =>
       m.nombre.toLowerCase().includes(q) ||
       m.dueno.toLowerCase().includes(q) ||
       m.especie.toLowerCase().includes(q)
     );
   },
 
-  reiniciar: (): void => {
+  reset: (): void => {
     listaMascotas = [...MASCOTAS_INICIALES];
   }
 };

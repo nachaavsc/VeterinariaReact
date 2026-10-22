@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { MascotaEntrada, EstadoMascota } from '../../services/tipos';
-import { CampoFormulario } from '../Moleculas/CampoFormulario';
-import { Input } from '../Atomos/Input';
-import { Select } from '../Atomos/Select';
-import { Boton } from '../Atomos/Boton';
+import type { MascotaInput, EstadoAtencion } from '../../types';
+import { CampoFormulario } from '../molecules/CampoFormulario';
+import { Input } from '../atoms/Input';
+import { Select } from '../atoms/Select';
+import { Boton } from '../atoms/Boton';
 
 interface FormularioMascotasProps {
-  datosIniciales?: MascotaEntrada;
-  alGuardar: (datos: MascotaEntrada) => void;
+  datosIniciales?: MascotaInput;
+  alGuardar: (datos: MascotaInput) => void;
   alCancelar?: () => void;
 }
 
@@ -21,7 +21,7 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
   const [raza, setRaza] = useState(datosIniciales?.raza || '');
   const [dueno, setDueno] = useState(datosIniciales?.dueno || '');
   const [emailDueno, setEmailDueno] = useState(datosIniciales?.emailDueno || '');
-  const [estado, setEstado] = useState<EstadoMascota>(datosIniciales?.estado || 'Pendiente');
+  const [estado, setEstado] = useState<EstadoAtencion>(datosIniciales?.estado || 'Pendiente');
   const [descripcion, setDescripcion] = useState(datosIniciales?.descripcion || '');
 
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -86,7 +86,7 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
             { label: 'Atendido', value: 'Atendido' }
           ]}
           value={estado}
-          onChange={(e) => setEstado(e.target.value as EstadoMascota)}
+          onChange={(e) => setEstado(e.target.value as EstadoAtencion)}
         />
       </CampoFormulario>
 
