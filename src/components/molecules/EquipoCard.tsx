@@ -6,8 +6,6 @@ interface EquipoCardProps {
   foto: string;
 }
 
-/** Devuelve las iniciales del nombre para el placeholder cuando la foto
- *  real todavía no existe en public/equipo/. */
 const obtenerIniciales = (nombre: string): string =>
   nombre
     .replace(/^(Dr\.|Dra\.)\s*/i, '')

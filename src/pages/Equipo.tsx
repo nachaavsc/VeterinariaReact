@@ -7,9 +7,6 @@ interface Especialista {
   foto: string;
 }
 
-// Las fotos reales van en public/equipo/ con estos mismos nombres de
-// archivo. Si todavía no están, <EquipoCard/> muestra un placeholder
-// con las iniciales en vez de romper la página.
 const ESPECIALISTAS: Especialista[] = [
   { nombre: 'Dra. Ana Rodríguez', especialidad: 'Medicina Interna', foto: '/equipo/especialistaAna.jpg' },
   { nombre: 'Dr. Carlos Muñoz', especialidad: 'Cirugía General', foto: '/equipo/especialistaCarlos.jpg' },
@@ -20,7 +17,7 @@ const ESPECIALISTAS: Especialista[] = [
 
 export const Equipo: React.FC = () => (
   <div>
-    <h2 className="text-center mb-4">Nuestro Equipo Médico</h2>
+    <h2 className="text-center text-primary mb-4">Nuestro Equipo Médico</h2>
     <div className="row row-cols-1 row-cols-md-3 g-4">
       {ESPECIALISTAS.map((especialista) => (
         <EquipoCard

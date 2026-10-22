@@ -10,6 +10,7 @@ import { Registro } from './pages/Registro';
 import { Admin } from './pages/Admin';
 import { Detalle } from './pages/Detalle';
 import { Contacto } from './pages/Contacto';
+import { NotFound } from './pages/NotFound';
 
 export const App: React.FC = () => (
   <BrowserRouter>
@@ -25,6 +26,7 @@ export const App: React.FC = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/detalle/:id" element={<Detalle />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

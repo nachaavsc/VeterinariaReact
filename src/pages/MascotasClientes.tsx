@@ -9,7 +9,7 @@ export const MascotasClientes: React.FC = () => {
 
   return (
     <div>
-      <h2 className="mb-4 text-center">Directorio de Mascotas y Clientes</h2>
+      <h2 className="mb-4 text-center text-primary">Directorio de Mascotas y Clientes</h2>
 
       <div className="input-group mb-4">
         <span className="input-group-text">🔍</span>

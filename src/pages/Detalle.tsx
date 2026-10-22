@@ -18,8 +18,6 @@ export const Detalle: React.FC = () => {
     );
   }
 
-  // La atención más reciente de esta mascota, modelada con la interfaz
-  // Atencion para reflejar el historial clínico de forma tipada.
   const ultimaAtencion: Atencion = {
     id: `atencion-${mascota.id}`,
     mascotaId: mascota.id,
@@ -45,7 +43,7 @@ export const Detalle: React.FC = () => {
 
           <hr className="my-4" />
 
-          <h4 className="mb-3">Última Atención</h4>
+          <h4 className="text-primary mb-3">Última Atención</h4>
           <p><strong>Fecha:</strong> {ultimaAtencion.fecha}</p>
           <p><strong>Veterinario:</strong> {ultimaAtencion.veterinario}</p>
           <p><strong>Motivo:</strong> {ultimaAtencion.motivo}</p>

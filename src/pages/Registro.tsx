@@ -17,7 +17,7 @@ export const Registro: React.FC = () => {
   return (
     <div className="row justify-content-center">
       <div className="col-md-8">
-        <h2 className="mb-4 text-center">Registro de Nueva Mascota / Cita</h2>
+        <h2 className="mb-4 text-center text-primary">Registro de Nueva Mascota / Cita</h2>
         {exito && <div className="alert alert-success">¡Registro guardado con éxito! Redirigiendo...</div>}
         <FormularioMascotas alGuardar={manejarGuardar} />
       </div>

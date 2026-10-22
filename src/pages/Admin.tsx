@@ -8,8 +8,6 @@ import type { Mascota } from '../types';
 export const Admin: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [idAEliminar, setIdAEliminar] = useState<string | null>(null);
-  // El repositorio vive en memoria fuera del estado de React; esta
-  // "versión" se incrementa tras eliminar para forzar el re-render.
   const [version, setVersion] = useState(0);
 
   const mascotas: Mascota[] = petsRepository.buscar(busqueda);
@@ -29,7 +27,7 @@ export const Admin: React.FC = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Panel de Administración de Mascotas</h2>
+        <h2 className="text-primary">Panel de Administración de Mascotas</h2>
       </div>
 
       <BarraBusqueda valor={busqueda} alCambiar={setBusqueda} />

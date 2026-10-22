@@ -7,8 +7,6 @@ interface TarjetasMascotasProps {
   mascotas: Mascota[];
 }
 
-/** Vista en tarjetas de un conjunto de mascotas, usada en el Inicio
- *  para destacar los registros más recientes. */
 export const TarjetasMascotas: React.FC<TarjetasMascotasProps> = ({ mascotas }) => (
   <div className="row g-4">
     {mascotas.map((mascota) => (
