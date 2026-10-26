@@ -3,6 +3,10 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Registro } from './Registro';
 import { petsRepository } from '../services/petsRepository';
+import { Boton } from '../components/atoms/Boton';
+import { Input } from '../components/atoms/Input';
+import { Estado } from '../components/atoms/Estado';
+import { BarraBusqueda } from '../components/molecules/BarraBusqueda';
 
 const renderizarRegistro = () =>
   render(
@@ -90,4 +94,94 @@ describe('Registro', () => {
     );
     expect(screen.getByText('¡Registro guardado con éxito! Redirigiendo...')).toBeInTheDocument();
   });
+
+  it('muestra mensaje de error si el formato del correo electrónico es inválido', async () => {
+    renderizarRegistro();
+
+    const inputEmail = screen.getByLabelText('Email del Dueño');
+    fireEvent.change(inputEmail, { target: { value: 'correo-invalido' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar Registro' }));
+
+    expect(screen.getByText(/email|correo|válido/i)).toBeInTheDocument();
+  });
+
+  it('aplica las clases CSS de Bootstrap recibidas por props', () => {
+    render(<Boton variante="danger" texto="Eliminar Mascota" />);
+    
+    const boton = screen.getByRole('button', { name: 'Eliminar Mascota' });
+    expect(boton).toHaveClass('btn-danger');
+  });
+
+  it('renderiza el badge con el estilo correcto según la prop estado', () => {
+    render(<Estado estado="Atendido" />);
+    const badge = screen.getByText('Atendido');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass('bg-success');
+  });
+
+  it('ejecuta la función alCambiar al escribir', () => {
+    const handleCambio = vi.fn();
+    render(<BarraBusqueda valor="" alCambiar={handleCambio} />);
+    
+    const input = screen.getByPlaceholderText(/buscar/i);
+    fireEvent.change(input, { target: { value: 'Golden' } });
+
+    expect(handleCambio).toHaveBeenCalledTimes(1);
+    expect(handleCambio).toHaveBeenCalledWith('Golden');
+  });
+
+  it('obtiene el listado completo de mascotas registradas', () => {
+    const lista = petsRepository.obtenerTodas();
+    expect(lista.length).toBeGreaterThan(0);
+  });
+
+  it('obtiene los detalles de una mascota específica por su ID', () => {
+    const lista = petsRepository.obtenerTodas();
+    const mascotaExistente = lista[0];
+    
+    const encontrada = petsRepository.obtenerPorId(mascotaExistente.id);
+    expect(encontrada).toBeDefined();
+    expect(encontrada?.nombre).toBe(mascotaExistente.nombre);
+  });
+
+  it('crea e inserta un nuevo registro de mascota correctamente', () => {
+    const nueva = petsRepository.crear({
+      nombre: 'Rocky',
+      especie: 'Perro',
+      raza: 'Boxer',
+      dueno: 'Carlos',
+      emailDueno: 'carlos@test.com',
+      estado: 'Pendiente'
+    });
+
+    expect(nueva.id).toBeDefined();
+    const verificacion = petsRepository.obtenerPorId(nueva.id);
+    expect(verificacion?.nombre).toBe('Rocky');
+  });
+
+  it('actualiza los datos o el estado de una mascota existente', () => {
+    const lista = petsRepository.obtenerTodas();
+    const idAActualizar = lista[0].id;
+
+    const actualizada = petsRepository.actualizar(idAActualizar, { estado: 'Atendido' });
+    expect(actualizada?.estado).toBe('Atendido');
+  });
+
+  it(' elimina una mascota del registro por su ID', () => {
+    const lista = petsRepository.obtenerTodas();
+    const idAEliminar = lista[0].id;
+
+    const resultado = petsRepository.eliminar(idAEliminar);
+    expect(resultado).toBe(true);
+    expect(petsRepository.obtenerPorId(idAEliminar)).toBeUndefined();
+  });
+
+  it('filtra la lista de mascotas según coincidencia de texto', () => {
+    const resultados = petsRepository.buscar('Max');
+    expect(resultados.length).toBeGreaterThan(0);
+    expect(resultados[0].nombre).toContain('Max');
+  });
+
+
 });
