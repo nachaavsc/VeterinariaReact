@@ -25,6 +25,7 @@ export const Navbar: React.FC = () => (
         <div className="navbar-nav ms-auto gap-lg-3">
           <NavLink className={enlaceClase} to="/">Inicio</NavLink>
           <NavLink className={enlaceClase} to="/servicios">Servicios</NavLink>
+          <NavLink className={enlaceClase} to="/novedades">Novedades</NavLink>
           <NavLink className={enlaceClase} to="/equipo">Equipo</NavLink>
           <NavLink className={enlaceClase} to="/mascotas-clientes">Mascotas y Clientes</NavLink>
           <NavLink className={enlaceClase} to="/registro">Registrar Cita</NavLink>

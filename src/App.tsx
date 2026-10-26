@@ -10,6 +10,7 @@ import { Registro } from './pages/Registro';
 import { Admin } from './pages/Admin';
 import { Detalle } from './pages/Detalle';
 import { Contacto } from './pages/Contacto';
+import { Novedades } from './pages/Novedades'; 
 import { NotFound } from './pages/NotFound';
 
 export const App: React.FC = () => (
@@ -20,6 +21,7 @@ export const App: React.FC = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/servicios" element={<Servicios />} />
+          <Route path="/novedades" element={<Novedades />} /> 
           <Route path="/equipo" element={<Equipo />} />
           <Route path="/mascotas-clientes" element={<MascotasClientes />} />
           <Route path="/registro" element={<Registro />} />
