@@ -22,16 +22,15 @@ public class ServicioService {
 
     public List<Servicio> obtenerActivos() {
         return repository.findAll().stream()
-                .filter(Servicio::isActivo)
+                .filter(s -> s != null && s.isActivo())
                 .toList();
     }
-
     public Optional<Servicio> obtenerPorId(Long id) {
         return repository.findById(id);
     }
 
     public Servicio crear(Servicio servicio) {
-        // Reglas de negocio / validaciones
+
         if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del servicio es obligatorio");
         }

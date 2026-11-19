@@ -1,56 +1,66 @@
 package com.Veterinaria.Servicios.controller;
 
 import com.Veterinaria.Servicios.model.Servicio;
-import com.Veterinaria.Servicios.repository.ServicioRepository;
+import com.Veterinaria.Servicios.service.ServicioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/servicios")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ServicioController {
 
-    private final ServicioRepository repo;
+    private final ServicioService service;
 
-    public ServicioController(ServicioRepository repo) {
-        this.repo = repo;
+    public ServicioController(ServicioService service) {
+        this.service = service;
     }
 
     @GetMapping
     public List<Servicio> listar() {
-        return repo.findAll();
+        return service.obtenerTodos();
+    }
+
+    @GetMapping("/activos")
+    public List<Servicio> listarActivos() {
+        return service.obtenerActivos();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Servicio> obtenerPorId(@PathVariable Long id) {
-        return repo.findById(id)
+        return service.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Servicio crear(@RequestBody Servicio servicio) {
-        return repo.save(servicio);
+    public ResponseEntity<?> crear(@RequestBody Servicio servicio) {
+        try {
+            return ResponseEntity.ok(service.crear(servicio));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Servicio> actualizar(@PathVariable Long id, @RequestBody Servicio datos) {
-        return repo.findById(id).map(actual -> {
-            actual.setNombre(datos.getNombre());
-            actual.setCategoria(datos.getCategoria());
-            actual.setDescripcion(datos.getDescripcion());
-            actual.setPrecio(datos.getPrecio());
-            actual.setActivo(datos.isActivo());
-            return ResponseEntity.ok(repo.save(actual));
-        }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Servicio datos) {
+        try {
+            return service.actualizar(id, datos)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-        repo.deleteById(id);
+        if (!service.eliminar(id)) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.noContent().build();
     }
 }
