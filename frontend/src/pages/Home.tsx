@@ -108,7 +108,7 @@ export const Home: React.FC = () => {
       <div className="text-center mb-5">
         <h1 className="display-5 fw-bold text-primary">Bienvenido a Veterinaria San Marcos</h1>
         <p className="lead">Tu mascota en las mejores manos, siempre.</p>
-        <Link to="/registro" className="btn btn-primary btn-lg mt-2">Agendar Cita Ahora</Link>
+        <Link to="/registro" className="btn btn-primary btn-lg mt-2 btn-principal">Agendar Cita Ahora</Link>
       </div>
 
       <section className="row align-items-center g-4 my-5">
@@ -151,13 +151,13 @@ export const Home: React.FC = () => {
       </section>
 
       <section className="my-5">
-        <div className="card shadow-sm p-4">
+        <div className="card card-horario shadow-sm p-4">
           <h2 className="text-primary mb-3">Horarios de Atención y Ubicación</h2>
           <div className="row g-4">
             <div className="col-md-6">
               <ul className="list-unstyled mb-0">
                 {HORARIOS.map((item) => (
-                  <li key={item.dia} className="d-flex justify-content-between border-bottom py-2">
+                  <li key={item.dia} className="d-flex justify-content-between border-bottom py-2 horario-item">
                     <span className="fw-bold">{item.dia}</span>
                     <span>{item.horario}</span>
                   </li>
@@ -166,7 +166,7 @@ export const Home: React.FC = () => {
             </div>
             <div className="col-md-6 d-flex flex-column justify-content-between">
               <p className="mb-3">📍 Av. San Marcos 1234, Rancagua</p>
-              <Link to="/registro" className="btn btn-primary align-self-start">Agendar Cita</Link>
+              <Link to="/registro" className="btn btn-primary align-self-start btn-principal">Agendar Cita</Link>
             </div>
           </div>
         </div>
