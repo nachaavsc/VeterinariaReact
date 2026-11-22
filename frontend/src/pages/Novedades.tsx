@@ -40,13 +40,52 @@ const listaNovedades: Noticia[] = [
   }
 ];
 
+const CAMPANAS = [
+  {
+    dia: '06',
+    mes: 'Dic',
+    titulo: 'Jornada de Vacunación Óctuple y Antirrábica',
+    detalle: 'Sede principal, de 09:00 a 14:00 hrs. Trae la cartilla de tu mascota.',
+    icono: 'bi-shield-check'
+  },
+  {
+    dia: '13',
+    mes: 'Dic',
+    titulo: 'Operativo de Desparasitación',
+    detalle: 'Interna y externa para perros y gatos, con valor preferencial.',
+    icono: 'bi-bug'
+  },
+  {
+    dia: '20',
+    mes: 'Dic',
+    titulo: 'Control Dental Preventivo',
+    detalle: 'Evaluación bucal sin costo con reserva previa.',
+    icono: 'bi-stars'
+  }
+];
+
+const PREGUNTAS = [
+  {
+    pregunta: '¿Qué debo llevar a la primera consulta?',
+    respuesta: 'Trae la cartilla de vacunas, exámenes o recetas anteriores y una lista de los alimentos y medicamentos que recibe. Los perros deben venir con correa y los gatos en su transportadora.'
+  },
+  {
+    pregunta: '¿Mi mascota debe estar en ayuno antes de exámenes o cirugía?',
+    respuesta: 'Para exámenes de sangre se recomiendan 8 horas de ayuno de comida. Antes de una cirugía, el ayuno es de 8 a 12 horas de comida y 2 horas de agua, salvo indicación distinta del veterinario.'
+  },
+  {
+    pregunta: '¿Cómo funciona la atención de urgencias?',
+    respuesta: 'Atendemos urgencias las 24 horas sin hora previa. Al llegar se realiza una evaluación inicial y se prioriza según la gravedad del caso. Si puedes, llámanos en camino para preparar la atención.'
+  }
+];
+
 export const Novedades: React.FC = () => {
   const [noticiaSeleccionada, setNoticiaSeleccionada] = useState<Noticia | null>(null);
 
   return (
     <div className="container py-4">
       <div className="text-center mb-5">
-        <h1 className="fw-bold text-success">📰 Novedades y Noticias</h1>
+        <h1 className="fw-bold text-primary">Novedades y Noticias</h1>
         <p className="lead text-muted">
           Mantente al día con las últimas novedades y eventos de Veterinaria San Marcos.
         </p>
@@ -55,27 +94,29 @@ export const Novedades: React.FC = () => {
       <div className="row g-4">
         {listaNovedades.map((item) => (
           <div key={item.id} className="col-md-4">
-            <div className="card h-100 shadow-sm border-0">
+            <div className="card h-100 shadow-sm border-0 card-noticia">
               <img
                 src={item.imagen}
                 className="card-img-top"
                 alt={item.titulo}
                 style={{ height: '200px', objectFit: 'cover' }}
               />
-              <div className="card-body d-flex flex-column">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span className="badge bg-success">{item.categoria}</span>
-                  <small className="text-muted">{item.fecha}</small>
+              <div className="card-body d-flex flex-column p-4">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <span className="badge rounded-pill badge-especialidad">
+                    <i className="bi bi-tag me-1"></i>{item.categoria}
+                  </span>
+                  <small className="text-muted"><i className="bi bi-calendar3 me-1"></i>{item.fecha}</small>
                 </div>
                 <h5 className="card-title fw-bold">{item.titulo}</h5>
                 <p className="card-text text-secondary flex-grow-1">
                   {item.descripcion}
                 </p>
                 <button
-                  className="btn btn-outline-success btn-sm mt-3 w-100"
+                  className="btn btn-outline-veterinaria btn-sm mt-3 w-100"
                   onClick={() => setNoticiaSeleccionada(item)}
                 >
-                  Leer más
+                  Leer más<i className="bi bi-arrow-right ms-2"></i>
                 </button>
               </div>
             </div>
@@ -83,9 +124,62 @@ export const Novedades: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal Informativo */}
+      <section className="mt-5 pt-3">
+        <h2 className="h3 fw-bold text-primary mb-1">Campañas y Operativos del Mes</h2>
+        <p className="text-muted mb-4">Fechas próximas en nuestra sede principal. Cupos limitados por jornada.</p>
+        <div className="row row-cols-1 row-cols-md-3 g-3">
+          {CAMPANAS.map((campana) => (
+            <div key={campana.titulo} className="col">
+              <div className="card h-100 border-0 shadow-sm card-campana">
+                <div className="card-body d-flex gap-3 align-items-start">
+                  <div className="fecha-campana text-center flex-shrink-0">
+                    <span className="d-block fs-4 fw-bold lh-1">{campana.dia}</span>
+                    <small className="text-uppercase">{campana.mes}</small>
+                  </div>
+                  <div>
+                    <h3 className="h6 fw-bold mb-1">
+                      <i className={`bi ${campana.icono} text-primary me-2`}></i>{campana.titulo}
+                    </h3>
+                    <p className="small text-muted mb-0">{campana.detalle}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-5 pt-3">
+        <h2 className="h3 fw-bold text-primary mb-4">Preguntas Frecuentes</h2>
+        <div className="accordion shadow-sm" id="accordionNovedades">
+          {PREGUNTAS.map((item, indice) => (
+            <div className="accordion-item" key={item.pregunta}>
+              <h3 className="accordion-header">
+                <button
+                  className={`accordion-button fw-semibold ${indice === 0 ? '' : 'collapsed'}`}
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target={`#novedad-faq-${indice}`}
+                  aria-expanded={indice === 0 ? 'true' : 'false'}
+                  aria-controls={`novedad-faq-${indice}`}
+                >
+                  {item.pregunta}
+                </button>
+              </h3>
+              <div
+                id={`novedad-faq-${indice}`}
+                className={`accordion-collapse collapse ${indice === 0 ? 'show' : ''}`}
+                data-bs-parent="#accordionNovedades"
+              >
+                <div className="accordion-body text-muted">{item.respuesta}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {noticiaSeleccionada && (
-        <div className="modal show d-block tab-index='-1'" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

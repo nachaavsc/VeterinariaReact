@@ -8,7 +8,7 @@ interface BarraBusquedaProps {
 
 export const BarraBusqueda: React.FC<BarraBusquedaProps> = ({ valor, alCambiar }) => (
   <div className="input-group mb-3">
-    <span className="input-group-text">🔍</span>
+    <span className="input-group-text"><i className="bi bi-search"></i></span>
     <Input
       placeholder="Buscar por nombre de mascota, dueño o especie..."
       value={valor}

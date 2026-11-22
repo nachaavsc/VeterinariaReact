@@ -215,3 +215,67 @@
   transform: translateY(-2px);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
+
+.card-servicio,
+.card-noticia,
+.card-campana {
+  border-radius: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-servicio:hover,
+.card-noticia:hover,
+.card-campana:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.75rem 1.5rem rgba(15, 118, 110, 0.12) !important;
+}
+
+.card-noticia {
+  overflow: hidden;
+}
+
+.icono-servicio {
+  width: 52px;
+  height: 52px;
+  border-radius: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-verde-claro);
+  color: var(--color-verde-oscuro);
+  font-size: 1.5rem;
+}
+
+.precio-etiqueta {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.cta-agenda {
+  background: linear-gradient(135deg, var(--color-verde-oscuro), var(--color-verde-primario));
+}
+
+.cta-agenda-texto {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.btn-outline-veterinaria {
+  color: var(--color-verde-oscuro);
+  border-color: var(--color-verde-primario);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-outline-veterinaria:hover,
+.btn-outline-veterinaria:focus-visible {
+  background-color: var(--color-verde-oscuro);
+  border-color: var(--color-verde-oscuro);
+  color: #fff;
+}
+
+.fecha-campana {
+  min-width: 56px;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-verde-claro);
+  color: var(--color-verde-oscuro);
+}

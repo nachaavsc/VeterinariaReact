@@ -42,19 +42,19 @@ const TESTIMONIOS = [
     nombre: 'Javiera Soto',
     mascota: 'Dueña de Thor',
     comentario: 'Excelente atención, el equipo fue muy claro con el tratamiento de mi perro y siempre estuvieron disponibles.',
-    estrellas: '⭐⭐⭐⭐⭐'
+    estrellas: 5
   },
   {
     nombre: 'Matías Pérez',
     mascota: 'Dueño de Luna',
     comentario: 'Agendé la cita online en minutos y la atención de urgencia un domingo nos salvó. Muy recomendadoooos.',
-    estrellas: '⭐⭐⭐⭐⭐'
+    estrellas: 5
   },
   {
     nombre: 'Camila Rojas',
     mascota: 'Dueña de Max',
     comentario: 'Profesionales, cercanos y con instalaciones muy limpias. Mi gato ya no les tiene miedo a las visitas.',
-    estrellas: '⭐⭐⭐⭐'
+    estrellas: 4
   }
 ];
 
@@ -126,7 +126,7 @@ export const Home: React.FC = () => {
         </div>
         <div className="col-md-6">
           <div className="card shadow-sm p-4 panel-verde-claro border-0">
-            <div className="icono-grande mb-2">🐾</div>
+            <div className="icono-grande text-primary mb-2"><i className="bi bi-heart-pulse"></i></div>
             <h5>Nuestra Misión</h5>
             <p className="mb-0">
               Brindar atención veterinaria integral, oportuna y empática, acompañando a cada dueño con
@@ -165,7 +165,7 @@ export const Home: React.FC = () => {
               </ul>
             </div>
             <div className="col-md-6 d-flex flex-column justify-content-between">
-              <p className="mb-3">📍 Av. San Marcos 1234, Rancagua</p>
+              <p className="mb-3"><i className="bi bi-geo-alt-fill text-primary me-2"></i>Av. San Marcos 1234, Rancagua</p>
               <Link to="/registro" className="btn btn-primary align-self-start btn-principal">Agendar Cita</Link>
             </div>
           </div>
@@ -178,7 +178,11 @@ export const Home: React.FC = () => {
           {TESTIMONIOS.map((testimonio) => (
             <div key={testimonio.nombre} className="col">
               <div className="card h-100 shadow-sm p-4">
-                <div className="mb-2">{testimonio.estrellas}</div>
+                <div className="mb-2 text-warning" aria-label={`${testimonio.estrellas} de 5 estrellas`}>
+                  {Array.from({ length: testimonio.estrellas }, (_, indice) => (
+                    <i key={indice} className="bi bi-star-fill me-1"></i>
+                  ))}
+                </div>
                 <p className="flex-grow-1">"{testimonio.comentario}"</p>
                 <p className="fw-bold mb-0">{testimonio.nombre}</p>
                 <p className="text-muted mb-0">{testimonio.mascota}</p>

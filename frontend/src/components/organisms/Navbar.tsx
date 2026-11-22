@@ -7,7 +7,7 @@ const enlaceClase = ({ isActive }: { isActive: boolean }) =>
 export const Navbar: React.FC = () => (
   <nav className="navbar navbar-expand-lg navbar-dark navbar-veterinaria shadow-sm mb-4">
     <div className="container">
-      <NavLink className="navbar-brand fw-bold" to="/">🐾 Veterinaria San Marcos</NavLink>
+      <NavLink className="navbar-brand fw-bold" to="/"><i className="bi bi-heart-pulse-fill me-2"></i>Veterinaria San Marcos</NavLink>
 
       <button
         className="navbar-toggler"

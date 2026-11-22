@@ -12,7 +12,7 @@ export const MascotasClientes: React.FC = () => {
       <h2 className="mb-4 text-center text-primary">Directorio de Mascotas y Clientes</h2>
 
       <div className="input-group mb-4">
-        <span className="input-group-text">🔍</span>
+        <span className="input-group-text"><i className="bi bi-search"></i></span>
         <input
           type="text"
           className="form-control"
