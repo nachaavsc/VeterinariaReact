@@ -1,27 +1,44 @@
 import React, { useState } from 'react';
+import { API, ErrorApi, peticion } from '../services/api';
 
 export const Contacto: React.FC = () => {
   const [enviado, setEnviado] = useState(false);
   const [telefono, setTelefono] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [email, setEmail] = useState('');
+  const [contenido, setContenido] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState('');
 
-  // Función para permitir solo números (y opcionalmente el +)
   const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valorIngresado = e.target.value;
-    // Remueve todo lo que NO sea un número
-    const soloNumeros = valorIngresado.replace(/[^0-9]/g, '');
-    setTelefono(soloNumeros);
+    setTelefono(e.target.value.replace(/[^0-9]/g, ''));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEnviado(true);
-    setTimeout(() => setEnviado(false), 4000);
+    setEnviando(true);
+    setError('');
+    try {
+      await peticion(API.mensajes, {
+        method: 'POST',
+        body: JSON.stringify({ nombreRemitente: nombre, email, telefono, asunto: 'Consulta desde el sitio web', contenido })
+      });
+      setNombre('');
+      setEmail('');
+      setTelefono('');
+      setContenido('');
+      setEnviado(true);
+      setTimeout(() => setEnviado(false), 4000);
+    } catch (err) {
+      setError(err instanceof ErrorApi ? err.message : 'No pudimos enviar tu mensaje. Intenta nuevamente más tarde.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
     <div className="container py-2">
       <div className="row g-4">
-        {/* Columna Izquierda: Información de Contacto y Ubicación */}
         <div className="col-lg-6">
           <div className="card shadow-sm border-0 h-100 p-4">
             <h3 className="fw-bold text-success mb-3"> Ubicación e Información</h3>
@@ -46,7 +63,6 @@ export const Contacto: React.FC = () => {
               <p className="text-muted mb-0">Lunes a Sábado de 09:00 a 20:00 hrs.</p>
             </div>
 
-            {/* Mapa Interactivo */}
             <div className="mt-auto pt-2">
               <h6 className="fw-bold text-dark mb-2"> Encuéntranos en el mapa:</h6>
               <div className="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
@@ -62,7 +78,6 @@ export const Contacto: React.FC = () => {
           </div>
         </div>
 
-        {/* Columna Derecha: Formulario de Contacto */}
         <div className="col-lg-6">
           <div className="card shadow-sm border-0 p-4">
             <h3 className="fw-bold text-success mb-3"> Envíanos un mensaje</h3>
@@ -73,30 +88,39 @@ export const Contacto: React.FC = () => {
               </div>
             )}
 
+            {error && <div className="alert alert-danger" role="alert">{error}</div>}
+
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
-                <label className="form-label fw-bold mb-1">Nombre Completo</label>
+                <label htmlFor="contactoNombre" className="form-label fw-bold mb-1">Nombre Completo</label>
                 <input
+                  id="contactoNombre"
                   type="text"
                   className="form-control"
                   placeholder="Ej: María González"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
                   required
                 />
               </div>
 
               <div className="mb-2">
-                <label className="form-label fw-bold mb-1">Correo Electrónico</label>
+                <label htmlFor="contactoEmail" className="form-label fw-bold mb-1">Correo Electrónico</label>
                 <input
+                  id="contactoEmail"
                   type="email"
                   className="form-control"
                   placeholder="nombre@ejemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
 
               <div className="mb-2">
-                <label className="form-label fw-bold mb-1">Teléfono de Contacto</label>
+                <label htmlFor="contactoTelefono" className="form-label fw-bold mb-1">Teléfono de Contacto</label>
                 <input
+                  id="contactoTelefono"
                   type="text"
                   inputMode="numeric"
                   className="form-control"
@@ -108,17 +132,20 @@ export const Contacto: React.FC = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label fw-bold mb-1">Asunto / Consulta</label>
+                <label htmlFor="contactoMensaje" className="form-label fw-bold mb-1">Asunto / Consulta</label>
                 <textarea
+                  id="contactoMensaje"
                   className="form-control"
                   rows={3}
+                  value={contenido}
+                  onChange={(e) => setContenido(e.target.value)}
                   placeholder="Escribe aquí tus dudas sobre vacunas, consultas médicas o servicios..."
                   required
                 ></textarea>
               </div>
 
-              <button type="submit" className="btn btn-success w-100 fw-bold">
-                Enviar Mensaje
+              <button type="submit" className="btn btn-success w-100 fw-bold" disabled={enviando}>
+                {enviando ? 'Enviando...' : 'Enviar Mensaje'}
               </button>
             </form>
           </div>

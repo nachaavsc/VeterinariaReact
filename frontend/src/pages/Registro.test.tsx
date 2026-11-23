@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { Registro } from './Registro';
 import { petsRepository } from '../services/petsRepository';
 import { Boton } from '../components/atoms/Boton';
-import { Input } from '../components/atoms/Input';
 import { Estado } from '../components/atoms/Estado';
 import { BarraBusqueda } from '../components/molecules/BarraBusqueda';
 

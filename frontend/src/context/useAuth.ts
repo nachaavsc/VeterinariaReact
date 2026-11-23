@@ -11,8 +11,9 @@ export interface Usuario {
 export interface AuthContextValue {
   usuario: Usuario | null;
   rol: Rol | null;
-  login: (correo: string, contrasena: string) => boolean;
-  register: (nombre: string, correo: string, contrasena: string) => boolean;
+  token: string | null;
+  login: (correo: string, contrasena: string) => Promise<boolean>;
+  register: (nombre: string, correo: string, contrasena: string) => Promise<boolean>;
   logout: () => void;
   modalAbierto: boolean;
   abrirModal: () => void;

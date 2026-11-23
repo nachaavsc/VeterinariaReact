@@ -2,6 +2,8 @@ package com.Veterinaria.Servicios.controller;
 
 import com.Veterinaria.Servicios.model.Servicio;
 import com.Veterinaria.Servicios.service.ServicioService;
+import com.Veterinaria.Servicios.security.RequiereRol;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,8 @@ public class ServicioController {
     }
 
     @PostMapping
+    @RequiereRol("ADMIN")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> crear(@RequestBody Servicio servicio) {
         try {
             return ResponseEntity.ok(service.crear(servicio));
@@ -46,6 +50,8 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}")
+    @RequiereRol("ADMIN")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Servicio datos) {
         try {
             return service.actualizar(id, datos)
@@ -57,6 +63,8 @@ public class ServicioController {
     }
 
     @DeleteMapping("/{id}")
+    @RequiereRol("ADMIN")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (!service.eliminar(id)) {
             return ResponseEntity.notFound().build();

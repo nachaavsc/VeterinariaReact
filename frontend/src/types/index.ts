@@ -9,6 +9,7 @@ export interface Mascota {
   emailDueno: string;
   estado: EstadoAtencion;
   descripcion?: string;
+  imagen?: string;
 }
 
 export type MascotaInput = Omit<Mascota, 'id'>;

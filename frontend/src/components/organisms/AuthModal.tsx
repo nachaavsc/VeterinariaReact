@@ -18,12 +18,12 @@ export const AuthModal: React.FC = () => {
     setError('');
   };
 
-  const enviarLogin = (e: React.FormEvent) => {
+  const enviarLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!login(correo, contrasena)) setError('Correo o contraseña incorrectos');
+    if (!(await login(correo, contrasena))) setError('Correo o contraseña incorrectos');
   };
 
-  const enviarRegistro = (e: React.FormEvent) => {
+  const enviarRegistro = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nuevo.nombre.trim() || !nuevo.correo.trim() || !nuevo.contrasena) {
       setError('Completa todos los campos');
@@ -33,7 +33,7 @@ export const AuthModal: React.FC = () => {
       setError('Ingresa un correo válido');
       return;
     }
-    if (!register(nuevo.nombre, nuevo.correo, nuevo.contrasena)) {
+    if (!(await register(nuevo.nombre, nuevo.correo, nuevo.contrasena))) {
       setError('Ya existe una cuenta con ese correo');
       return;
     }

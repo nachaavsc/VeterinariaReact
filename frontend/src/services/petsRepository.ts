@@ -1,4 +1,11 @@
 import type { Mascota, MascotaInput } from '../types';
+import { API, peticion } from './api';
+
+interface MascotaApi extends MascotaInput {
+  id: number;
+}
+
+const desdeApi = (mascota: MascotaApi): Mascota => ({ ...mascota, id: String(mascota.id) });
 
 const MASCOTAS_INICIALES: Mascota[] = [
   {
@@ -46,6 +53,11 @@ export const petsRepository = {
   crear: (nuevaMascota: MascotaInput): Mascota => {
     const creada: Mascota = { ...nuevaMascota, id: Date.now().toString() };
     listaMascotas.push(creada);
+    peticion<MascotaApi>(API.mascotas, { method: 'POST', body: JSON.stringify(nuevaMascota) })
+      .then((guardada) => {
+        listaMascotas = listaMascotas.map((m) => (m.id === creada.id ? desdeApi(guardada) : m));
+      })
+      .catch(() => undefined);
     return creada;
   },
 
@@ -53,13 +65,16 @@ export const petsRepository = {
     const indice = listaMascotas.findIndex((m) => m.id === id);
     if (indice === -1) return null;
     listaMascotas[indice] = { ...listaMascotas[indice], ...campos };
+    peticion(`${API.mascotas}/${id}`, { method: 'PUT', body: JSON.stringify(listaMascotas[indice]) }).catch(() => undefined);
     return listaMascotas[indice];
   },
 
   eliminar: (id: string): boolean => {
     const largoInicial = listaMascotas.length;
     listaMascotas = listaMascotas.filter((m) => m.id !== id);
-    return listaMascotas.length < largoInicial;
+    const eliminada = listaMascotas.length < largoInicial;
+    if (eliminada) peticion(`${API.mascotas}/${id}`, { method: 'DELETE' }).catch(() => undefined);
+    return eliminada;
   },
 
   buscar: (criterio: string): Mascota[] => {
@@ -70,6 +85,16 @@ export const petsRepository = {
       m.dueno.toLowerCase().includes(q) ||
       m.especie.toLowerCase().includes(q)
     );
+  },
+
+  sincronizar: async (): Promise<boolean> => {
+    try {
+      const mascotas = await peticion<MascotaApi[]>(API.mascotas);
+      listaMascotas = mascotas.map(desdeApi);
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   reiniciar: (): void => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BarraBusqueda } from '../components/molecules/BarraBusqueda';
 import { Confirmacion } from '../components/molecules/Confirmacion';
 import { TablaMascotas } from '../components/organisms/TablaMascotas';
@@ -9,6 +9,10 @@ export const Admin: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [idAEliminar, setIdAEliminar] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    petsRepository.sincronizar().then(() => setVersion((v) => v + 1));
+  }, []);
 
   const mascotas: Mascota[] = petsRepository.buscar(busqueda);
 

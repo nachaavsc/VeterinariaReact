@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { petsRepository } from '../services/petsRepository';
 import { Estado } from '../components/atoms/Estado';
 
 export const MascotasClientes: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
+  const [, setVersion] = useState(0);
+
+  useEffect(() => {
+    petsRepository.sincronizar().then(() => setVersion((v) => v + 1));
+  }, []);
 
   const resultados = petsRepository.buscar(busqueda);
 

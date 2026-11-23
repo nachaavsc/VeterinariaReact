@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { petsRepository } from '../services/petsRepository';
+import { API, peticion } from '../services/api';
 import { Estado } from '../components/atoms/Estado';
 import type { Atencion } from '../types';
 
+type AtencionApi = Omit<Atencion, 'id' | 'mascotaId'> & { id: number; mascotaId: number };
+
 export const Detalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [, setVersion] = useState(0);
+  const [historial, setHistorial] = useState<Atencion | null>(null);
   const mascota = id ? petsRepository.obtenerPorId(id) : undefined;
+
+  useEffect(() => {
+    if (!id) return;
+    petsRepository.sincronizar().then(() => setVersion((v) => v + 1));
+    peticion<AtencionApi[]>(`${API.historial}/mascota/${id}`)
+      .then(([ultima]) => {
+        if (!ultima) return;
+        setHistorial({
+          ...ultima,
+          id: String(ultima.id),
+          mascotaId: String(ultima.mascotaId),
+          fecha: new Date(`${ultima.fecha}T00:00:00`).toLocaleDateString('es-CL')
+        });
+      })
+      .catch(() => undefined);
+  }, [id]);
 
   if (!mascota) {
     return (
@@ -18,7 +39,7 @@ export const Detalle: React.FC = () => {
     );
   }
 
-  const ultimaAtencion: Atencion = {
+  const ultimaAtencion: Atencion = historial ?? {
     id: `atencion-${mascota.id}`,
     mascotaId: mascota.id,
     fecha: new Date().toLocaleDateString('es-CL'),
