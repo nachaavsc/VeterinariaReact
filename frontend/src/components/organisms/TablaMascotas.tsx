@@ -6,10 +6,11 @@ import { Boton } from '../atoms/Boton';
 
 interface TablaMascotasProps {
   mascotas: Mascota[];
-  alEliminar: (id: string) => void;
+  alEditar: (mascota: Mascota) => void;
+  alEliminar: (id: number) => void;
 }
 
-export const TablaMascotas: React.FC<TablaMascotasProps> = ({ mascotas, alEliminar }) => {
+export const TablaMascotas: React.FC<TablaMascotasProps> = ({ mascotas, alEditar, alEliminar }) => {
   if (mascotas.length === 0) {
     return (
       <div className="alert alert-info text-center my-4">
@@ -48,6 +49,12 @@ export const TablaMascotas: React.FC<TablaMascotasProps> = ({ mascotas, alElimin
                   <Link to={`/detalle/${m.id}`} className="btn btn-sm btn-outline-primary">
                     Ver Detalle
                   </Link>
+                  <Boton
+                    variante="warning"
+                    texto="Editar"
+                    className="btn-sm"
+                    onClick={() => alEditar(m)}
+                  />
                   <Boton
                     variante="danger"
                     texto="Eliminar"

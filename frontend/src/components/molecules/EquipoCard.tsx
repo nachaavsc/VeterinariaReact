@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface EquipoCardProps {
   nombre: string;
@@ -6,6 +7,8 @@ interface EquipoCardProps {
   foto: string;
   resena: string;
   experiencia: string;
+  email?: string;
+  enlaceAgenda?: string;
 }
 
 const obtenerIniciales = (nombre: string): string =>
@@ -18,7 +21,7 @@ const obtenerIniciales = (nombre: string): string =>
     .join('')
     .toUpperCase();
 
-export const EquipoCard: React.FC<EquipoCardProps> = ({ nombre, especialidad, foto, resena, experiencia }) => {
+export const EquipoCard: React.FC<EquipoCardProps> = ({ nombre, especialidad, foto, resena, experiencia, email, enlaceAgenda }) => {
   const [errorCarga, setErrorCarga] = useState(false);
 
   return (
@@ -27,7 +30,7 @@ export const EquipoCard: React.FC<EquipoCardProps> = ({ nombre, especialidad, fo
         <div className="card-equipo-cabecera"></div>
         <div className="card-body text-center pt-0 d-flex flex-column">
           <div className="avatar-equipo mx-auto mb-3">
-            {errorCarga ? (
+            {errorCarga || !foto ? (
               <span>{obtenerIniciales(nombre)}</span>
             ) : (
               <img src={foto} alt={nombre} onError={() => setErrorCarga(true)} />
@@ -39,10 +42,22 @@ export const EquipoCard: React.FC<EquipoCardProps> = ({ nombre, especialidad, fo
               <i className="bi bi-heart-pulse me-1"></i>{especialidad}
             </span>
           </div>
+          {experiencia && (
+            <small className="text-primary fw-semibold mb-2">
+              <i className="bi bi-award me-1"></i>{experiencia}
+            </small>
+          )}
           <p className="card-text text-muted small flex-grow-1">{resena}</p>
-          <small className="text-primary fw-semibold">
-            <i className="bi bi-award me-1"></i>{experiencia}
-          </small>
+          {email && (
+            <a href={`mailto:${email}`} className="small contacto-especialista mb-3">
+              <i className="bi bi-envelope me-1"></i>{email}
+            </a>
+          )}
+          {enlaceAgenda && (
+            <Link to={enlaceAgenda} className="btn btn-outline-veterinaria btn-principal btn-sm fw-semibold mt-auto">
+              <i className="bi bi-calendar-plus me-1"></i>Agendar con especialista
+            </Link>
+          )}
         </div>
       </div>
     </div>

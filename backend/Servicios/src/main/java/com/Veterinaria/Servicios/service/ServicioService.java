@@ -25,18 +25,20 @@ public class ServicioService {
                 .filter(s -> s != null && s.isActivo())
                 .toList();
     }
+
     public Optional<Servicio> obtenerPorId(Long id) {
         return repository.findById(id);
     }
 
     public Servicio crear(Servicio servicio) {
-
         if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del servicio es obligatorio");
         }
         if (servicio.getPrecio() == null || servicio.getPrecio() <= 0) {
             throw new IllegalArgumentException("El precio del servicio debe ser mayor a 0");
         }
+        validarRangoPrecio(servicio);
+        servicio.setId(null);
         servicio.setActivo(true);
         return repository.save(servicio);
     }
@@ -45,12 +47,17 @@ public class ServicioService {
         if (datos.getPrecio() != null && datos.getPrecio() <= 0) {
             throw new IllegalArgumentException("El precio del servicio debe ser mayor a 0");
         }
-
+        validarRangoPrecio(datos);
         return repository.findById(id).map(actual -> {
             actual.setNombre(datos.getNombre());
             actual.setCategoria(datos.getCategoria());
             actual.setDescripcion(datos.getDescripcion());
             actual.setPrecio(datos.getPrecio());
+            actual.setPrecioMaximo(datos.getPrecioMaximo());
+            actual.setIcono(datos.getIcono());
+            actual.setDuracion(datos.getDuracion());
+            actual.setModalidad(datos.getModalidad());
+            actual.setIncluye(datos.getIncluye());
             actual.setActivo(datos.isActivo());
             return repository.save(actual);
         });
@@ -62,5 +69,11 @@ public class ServicioService {
         }
         repository.deleteById(id);
         return true;
+    }
+
+    private void validarRangoPrecio(Servicio servicio) {
+        if (servicio.getPrecio() != null && servicio.getPrecioMaximo() != null && servicio.getPrecioMaximo() < servicio.getPrecio()) {
+            throw new IllegalArgumentException("El precio máximo no puede ser menor al precio base");
+        }
     }
 }

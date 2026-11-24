@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,12 +19,23 @@ public class Mensaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre del remitente es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombreRemitente;
+
+    @NotBlank(message = "El correo electrónico es obligatorio")
+    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Ingrese un correo electrónico válido")
     private String email;
+
+    @Pattern(regexp = "^(|\\+?\\d{8,12})$", message = "El teléfono debe tener entre 8 y 12 dígitos")
     private String telefono;
+
+    @Size(max = 255, message = "El asunto no puede superar los 255 caracteres")
     private String asunto;
 
     @Column(length = 1000)
+    @NotBlank(message = "El contenido del mensaje no puede estar vacío")
+    @Size(max = 1000, message = "El mensaje no puede superar los 1000 caracteres")
     private String contenido;
 
     private LocalDateTime fechaEnvio;

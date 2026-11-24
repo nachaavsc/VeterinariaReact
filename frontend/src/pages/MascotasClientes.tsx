@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { petsRepository } from '../services/petsRepository';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { filtrarMascotas, mascotasApi } from '../services/repositorios';
+import { useRecurso } from '../hooks/useRecurso';
 import { Estado } from '../components/atoms/Estado';
+import { Alerta } from '../components/atoms/Alerta';
+import { Cargando } from '../components/atoms/Cargando';
+import type { Mascota } from '../types';
+
+const SIN_MASCOTAS: Mascota[] = [];
 
 export const MascotasClientes: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
-  const [, setVersion] = useState(0);
+  const { datos: mascotas, cargando, error } = useRecurso(mascotasApi.listar, SIN_MASCOTAS);
 
-  useEffect(() => {
-    petsRepository.sincronizar().then(() => setVersion((v) => v + 1));
-  }, []);
-
-  const resultados = petsRepository.buscar(busqueda);
+  const resultados = filtrarMascotas(mascotas, busqueda);
 
   return (
     <div>
@@ -27,7 +30,11 @@ export const MascotasClientes: React.FC = () => {
         />
       </div>
 
-      {resultados.length === 0 ? (
+      <Alerta tipo="danger" mensaje={error} />
+
+      {cargando ? (
+        <Cargando texto="Cargando mascotas..." />
+      ) : resultados.length === 0 ? (
         <p className="text-muted text-center">No se encontraron coincidencias.</p>
       ) : (
         <div className="table-responsive">
@@ -39,6 +46,7 @@ export const MascotasClientes: React.FC = () => {
                 <th>Cliente (Dueño)</th>
                 <th>Contacto</th>
                 <th>Estado</th>
+                <th className="text-end">Detalle</th>
               </tr>
             </thead>
             <tbody>
@@ -49,6 +57,9 @@ export const MascotasClientes: React.FC = () => {
                   <td>{mascota.dueno}</td>
                   <td>{mascota.emailDueno}</td>
                   <td><Estado estado={mascota.estado} /></td>
+                  <td className="text-end">
+                    <Link to={`/detalle/${mascota.id}`} className="btn btn-sm btn-outline-primary">Ver detalle</Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

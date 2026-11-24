@@ -4,16 +4,15 @@ import com.Veterinaria.Historial.model.Atencion;
 import com.Veterinaria.Historial.security.RequiereRol;
 import com.Veterinaria.Historial.service.AtencionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/historial")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AtencionController {
 
     private final AtencionService service;
@@ -48,25 +47,17 @@ public class AtencionController {
     @PostMapping
     @RequiereRol("ADMIN")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> crear(@RequestBody Atencion atencion) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(atencion));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Atencion> crear(@Valid @RequestBody Atencion atencion) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(atencion));
     }
 
     @PutMapping("/{id}")
     @RequiereRol("ADMIN")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Atencion datos) {
-        try {
-            return service.actualizar(id, datos)
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Atencion> actualizar(@PathVariable Long id, @Valid @RequestBody Atencion datos) {
+        return service.actualizar(id, datos)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

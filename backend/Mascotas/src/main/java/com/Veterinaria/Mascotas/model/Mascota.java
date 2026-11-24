@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "mascotas")
@@ -15,17 +18,34 @@ public class Mascota {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombre;
+
+    @Size(max = 50, message = "La especie no puede superar los 50 caracteres")
     private String especie;
+
+    @NotBlank(message = "La raza es obligatoria")
+    @Size(max = 100, message = "La raza no puede superar los 100 caracteres")
     private String raza;
+
+    @NotBlank(message = "El nombre del dueño es obligatorio")
+    @Size(max = 100, message = "El nombre del dueño no puede superar los 100 caracteres")
     private String dueno;
+
+    @NotBlank(message = "El email del dueño es obligatorio")
+    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Ingrese un correo electrónico válido")
     private String emailDueno;
+
+    @Pattern(regexp = "^(|Atendido|Pendiente|En Tratamiento)$", message = "El estado debe ser Atendido, Pendiente o En Tratamiento")
     private String estado;
 
     @Column(length = 500)
+    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
     private String descripcion;
 
     @Column(length = 500)
+    @Size(max = 500, message = "La URL de la imagen no puede superar los 500 caracteres")
     private String imagen;
 
     public Mascota() {

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TarjetasMascotas } from '../components/organisms/TarjetasMascotas';
-import { petsRepository } from '../services/petsRepository';
+import { mascotasApi } from '../services/repositorios';
+import { useAuth } from '../context/useAuth';
+import { useRecurso } from '../hooks/useRecurso';
+import type { Mascota } from '../types';
 import hero1 from '../assets/hero1.png';
 import hero2 from '../assets/hero2.png';
 import hero3 from '../assets/hero3.png';
@@ -58,8 +61,22 @@ const TESTIMONIOS = [
   }
 ];
 
+const SIN_MASCOTAS: Mascota[] = [];
+
+const RegistrosRecientes: React.FC = () => {
+  const { datos: mascotas } = useRecurso(mascotasApi.listar, SIN_MASCOTAS);
+  if (mascotas.length === 0) return null;
+
+  return (
+    <section className="my-5">
+      <h2 className="text-center text-primary mb-4">Registros Recientes</h2>
+      <TarjetasMascotas mascotas={mascotas.slice(-3)} />
+    </section>
+  );
+};
+
 export const Home: React.FC = () => {
-  const mascotasRecientes = petsRepository.obtenerTodas().slice(-3);
+  const { usuario } = useAuth();
 
   return (
     <div>
@@ -192,10 +209,7 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="my-5">
-        <h2 className="text-center text-primary mb-4">Registros Recientes</h2>
-        <TarjetasMascotas mascotas={mascotasRecientes} />
-      </section>
+      {usuario && <RegistrosRecientes />}
     </div>
   );
 };

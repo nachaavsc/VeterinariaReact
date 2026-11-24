@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Noticia {
   id: number;
@@ -76,6 +77,39 @@ const PREGUNTAS = [
   {
     pregunta: '¿Cómo funciona la atención de urgencias?',
     respuesta: 'Atendemos urgencias las 24 horas sin hora previa. Al llegar se realiza una evaluación inicial y se prioriza según la gravedad del caso. Si puedes, llámanos en camino para preparar la atención.'
+  }
+];
+
+const CONSEJOS_ESTACIONALES = [
+  {
+    temporada: 'Primavera',
+    icono: 'bi-flower1',
+    titulo: 'Alergias y parásitos',
+    consejos: [
+      'Refuerza la desparasitación externa contra pulgas y garrapatas.',
+      'Revisa ojos, oídos y patas después de cada paseo.',
+      'Consulta si notas picazón persistente o estornudos.'
+    ]
+  },
+  {
+    temporada: 'Verano',
+    icono: 'bi-sun',
+    titulo: 'Calor e hidratación',
+    consejos: [
+      'Pasea temprano o al atardecer y evita el asfalto caliente.',
+      'Deja siempre agua fresca y una zona con sombra disponible.',
+      'Nunca dejes a tu mascota dentro de un auto estacionado.'
+    ]
+  },
+  {
+    temporada: 'Otoño e Invierno',
+    icono: 'bi-snow',
+    titulo: 'Defensas y articulaciones',
+    consejos: [
+      'Mantén al día las vacunas contra enfermedades respiratorias.',
+      'Abriga a mascotas mayores, pequeñas o de pelo corto.',
+      'Agenda un control si notas rigidez o menos ganas de moverse.'
+    ]
   }
 ];
 
@@ -175,6 +209,50 @@ export const Novedades: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-5 pt-3">
+        <h2 className="h3 fw-bold text-primary mb-1">Consejos de Cuidado Preventivo y Calendario Estacional</h2>
+        <p className="text-muted mb-4">Pequeños cuidados en cada época del año que previenen grandes problemas de salud.</p>
+        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+          {CONSEJOS_ESTACIONALES.map((item) => (
+            <div key={item.temporada} className="col">
+              <div className="card h-100 shadow-sm border-0 card-servicio">
+                <div className="card-body p-4">
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <div className="icono-servicio"><i className={`bi ${item.icono}`}></i></div>
+                    <span className="badge rounded-pill badge-especialidad px-3 py-2">{item.temporada}</span>
+                  </div>
+                  <h3 className="h5 fw-bold mb-3">{item.titulo}</h3>
+                  <ul className="list-unstyled small text-muted mb-0">
+                    {item.consejos.map((consejo) => (
+                      <li key={consejo} className="d-flex mb-2">
+                        <i className="bi bi-check2-circle text-primary me-2"></i>
+                        <span>{consejo}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="cta-agenda rounded-4 p-4 p-md-5 mt-5 text-white shadow-sm">
+        <div className="row align-items-center g-4">
+          <div className="col-md-8">
+            <h2 className="h3 fw-bold mb-2">Agenda un control preventivo</h2>
+            <p className="mb-0 cta-agenda-texto">
+              Un chequeo anual con vacunas y desparasitación al día es la mejor forma de cuidar a tu mascota en cada temporada.
+            </p>
+          </div>
+          <div className="col-md-4 text-md-end">
+            <Link to="/registro" className="btn btn-light btn-lg fw-semibold text-primary btn-principal">
+              <i className="bi bi-calendar-check me-2"></i>Agendar control
+            </Link>
+          </div>
         </div>
       </section>
 

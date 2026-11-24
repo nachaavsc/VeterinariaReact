@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "veterinarios")
@@ -15,13 +18,30 @@ public class Veterinario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombre;
+
+    @NotBlank(message = "La especialidad es obligatoria")
+    @Size(max = 100, message = "La especialidad no puede superar los 100 caracteres")
     private String especialidad;
 
     @Column(length = 500)
+    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
     private String descripcion;
+
+    @NotBlank(message = "El email es obligatorio")
+    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Ingrese un correo electrónico válido")
     private String email;
-    private boolean activo;
+
+    @NotBlank(message = "La foto es obligatoria")
+    @Size(max = 255, message = "La ruta de la foto no puede superar los 255 caracteres")
+    private String foto;
+
+    @Size(max = 100, message = "La experiencia no puede superar los 100 caracteres")
+    private String experiencia;
+
+    private boolean activo = true;
 
     public Veterinario() {
     }
@@ -73,6 +93,22 @@ public class Veterinario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public String getExperiencia() {
+        return experiencia;
+    }
+
+    public void setExperiencia(String experiencia) {
+        this.experiencia = experiencia;
     }
 
     public boolean isActivo() {

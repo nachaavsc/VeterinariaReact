@@ -4,16 +4,15 @@ import com.Veterinaria.Mascotas.model.Mascota;
 import com.Veterinaria.Mascotas.security.RequiereRol;
 import com.Veterinaria.Mascotas.service.MascotaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mascotas")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MascotaController {
 
     private final MascotaService service;
@@ -41,25 +40,17 @@ public class MascotaController {
     @PostMapping
     @RequiereRol
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> crear(@RequestBody Mascota mascota) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(mascota));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Mascota> crear(@Valid @RequestBody Mascota mascota) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(mascota));
     }
 
     @PutMapping("/{id}")
     @RequiereRol
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Mascota datos) {
-        try {
-            return service.actualizar(id, datos)
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Mascota> actualizar(@PathVariable Long id, @Valid @RequestBody Mascota datos) {
+        return service.actualizar(id, datos)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

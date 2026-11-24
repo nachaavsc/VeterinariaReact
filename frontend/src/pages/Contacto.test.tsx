@@ -16,7 +16,7 @@ describe('Contacto', () => {
   });
 
   it('envía el mensaje al microservicio Mensajeria y muestra la confirmación', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ id: 1 }), { status: 200 }));
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ id: 1 }), { status: 201 }));
     render(<Contacto />);
 
     completarFormulario();
@@ -42,7 +42,28 @@ describe('Contacto', () => {
     completarFormulario();
     fireEvent.click(screen.getByRole('button', { name: 'Enviar Mensaje' }));
 
-    expect(await screen.findByText('No pudimos enviar tu mensaje. Intenta nuevamente más tarde.')).toBeInTheDocument();
+    expect(await screen.findByText('No se pudo conectar con el servidor. Verifica que los servicios estén iniciados.')).toBeInTheDocument();
     expect(screen.getByLabelText('Nombre Completo')).toHaveValue('María González');
+  });
+
+  it('valida el correo antes de enviar y no llama al backend', () => {
+    render(<Contacto />);
+
+    completarFormulario();
+    fireEvent.change(screen.getByLabelText('Correo Electrónico'), { target: { value: 'maria@test' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar Mensaje' }));
+
+    expect(screen.getByText('Ingrese un correo electrónico válido')).toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('muestra el error de validación devuelto por el backend', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ error: 'El mensaje no puede superar los 1000 caracteres' }), { status: 400 }));
+    render(<Contacto />);
+
+    completarFormulario();
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar Mensaje' }));
+
+    expect(await screen.findByText('El mensaje no puede superar los 1000 caracteres')).toBeInTheDocument();
   });
 });

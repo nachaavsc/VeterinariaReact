@@ -4,15 +4,15 @@ import com.Veterinaria.Mensajeria.model.Mensaje;
 import com.Veterinaria.Mensajeria.service.MensajeService;
 import com.Veterinaria.Mensajeria.security.RequiereRol;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mensajes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MensajeController {
 
     private final MensajeService service;
@@ -38,12 +38,8 @@ public class MensajeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> enviar(@RequestBody Mensaje mensaje) {
-        try {
-            return ResponseEntity.ok(service.enviar(mensaje));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Mensaje> enviar(@Valid @RequestBody Mensaje mensaje) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.enviar(mensaje));
     }
 
     @PutMapping("/{id}/leido")

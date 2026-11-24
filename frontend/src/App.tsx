@@ -20,10 +20,11 @@ import { NotFound } from './pages/NotFound';
 const RutaProtegida: React.FC<{ rol?: Rol; children: React.ReactElement }> = ({ rol, children }) => {
   const { rol: rolActual, abrirModal } = useAuth();
   const permitido = rol ? rolActual === rol : rolActual !== null;
+  const aviso = rolActual ? 'Esta sección es solo para administradores.' : 'Inicia sesión para acceder a esta sección.';
 
   useEffect(() => {
-    if (!permitido) abrirModal();
-  }, [permitido, abrirModal]);
+    if (!permitido) abrirModal(aviso);
+  }, [permitido, abrirModal, aviso]);
 
   return permitido ? children : <Navigate to="/" replace />;
 };

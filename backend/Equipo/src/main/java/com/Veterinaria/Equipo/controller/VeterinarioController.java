@@ -4,16 +4,15 @@ import com.Veterinaria.Equipo.model.Veterinario;
 import com.Veterinaria.Equipo.security.RequiereRol;
 import com.Veterinaria.Equipo.service.VeterinarioService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/equipo")
-@CrossOrigin(origins = "http://localhost:5173")
 public class VeterinarioController {
 
     private final VeterinarioService service;
@@ -37,25 +36,17 @@ public class VeterinarioController {
     @PostMapping
     @RequiereRol("ADMIN")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> crear(@RequestBody Veterinario veterinario) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(veterinario));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Veterinario> crear(@Valid @RequestBody Veterinario veterinario) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(veterinario));
     }
 
     @PutMapping("/{id}")
     @RequiereRol("ADMIN")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Veterinario datos) {
-        try {
-            return service.actualizar(id, datos)
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Veterinario> actualizar(@PathVariable Long id, @Valid @RequestBody Veterinario datos) {
+        return service.actualizar(id, datos)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

@@ -29,13 +29,14 @@ public class MensajeService {
         if (mensaje.getNombreRemitente() == null || mensaje.getNombreRemitente().isBlank()) {
             throw new IllegalArgumentException("El nombre del remitente es obligatorio");
         }
-        if (mensaje.getEmail() == null || !mensaje.getEmail().contains("@")) {
+        if (mensaje.getEmail() == null || !mensaje.getEmail().matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
             throw new IllegalArgumentException("Ingrese un correo electrónico válido");
         }
         if (mensaje.getContenido() == null || mensaje.getContenido().isBlank()) {
             throw new IllegalArgumentException("El contenido del mensaje no puede estar vacío");
         }
 
+        mensaje.setId(null);
         mensaje.setFechaEnvio(LocalDateTime.now());
         mensaje.setLeido(false);
         return repository.save(mensaje);

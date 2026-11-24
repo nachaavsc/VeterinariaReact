@@ -6,7 +6,7 @@ export const BotonSesion: React.FC = () => {
 
   if (!usuario) {
     return (
-      <button type="button" className="btn btn-primary btn-sm shadow boton-sesion" onClick={abrirModal}>
+      <button type="button" className="btn btn-primary btn-sm shadow boton-sesion" onClick={() => abrirModal()}>
         <i className="bi bi-person-circle me-1"></i>Ingresar
       </button>
     );

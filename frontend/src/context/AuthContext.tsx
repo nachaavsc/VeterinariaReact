@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AuthContext, type Usuario } from './useAuth';
-import { API, CLAVE_TOKEN, ErrorApi, peticion } from '../services/api';
-
-interface Cuenta extends Usuario {
-  contrasena: string;
-}
+import { API, CLAVE_TOKEN, peticion, registrarAlNoAutorizado } from '../services/api';
 
 interface RespuestaAuth {
   token: string;
   usuario: Usuario;
 }
 
-const CLAVE_CUENTAS = 'cuentas';
 const CLAVE_SESION = 'usuario';
-
-const cuentasIniciales: Cuenta[] = [
-  { nombre: 'Cliente San Marcos', correo: 'tengosueno@gmail.com', contrasena: '1234', rol: 'CLIENTE' },
-  { nombre: 'Administrador', correo: 'admin@sanmarcos.cl', contrasena: '1234', rol: 'ADMIN' }
-];
+const AVISO_SESION_EXPIRADA = 'Tu sesión expiró. Inicia sesión nuevamente para continuar donde estabas.';
 
 const leer = <T,>(clave: string, porDefecto: T): T => {
   try {
@@ -37,75 +28,78 @@ const guardar = (clave: string, valor: unknown) => {
   }
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cuentas, setCuentas] = useState<Cuenta[]>(() => leer(CLAVE_CUENTAS, cuentasIniciales));
-  const [usuario, setUsuario] = useState<Usuario | null>(() => leer<Usuario | null>(CLAVE_SESION, null));
-  const [token, setToken] = useState<string | null>(() => leer<string | null>(CLAVE_TOKEN, null));
-  const [modalAbierto, setModalAbierto] = useState(false);
+const tokenVigente = (token: string | null): token is string => {
+  if (!token) return false;
+  try {
+    const carga = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const { exp } = JSON.parse(atob(carga)) as { exp?: number };
+    return typeof exp !== 'number' || exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
 
-  const iniciarSesion = ({ nombre, correo, rol }: Usuario, nuevoToken: string | null) => {
-    const sesion = { nombre, correo, rol };
-    setUsuario(sesion);
-    setToken(nuevoToken);
-    guardar(CLAVE_SESION, sesion);
-    guardar(CLAVE_TOKEN, nuevoToken);
+const leerSesionInicial = () => {
+  const token = leer<string | null>(CLAVE_TOKEN, null);
+  const usuario = leer<Usuario | null>(CLAVE_SESION, null);
+  if (tokenVigente(token) && usuario) return { token, usuario };
+  guardar(CLAVE_TOKEN, null);
+  guardar(CLAVE_SESION, null);
+  return { token: null, usuario: null };
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [sesion, setSesion] = useState<{ token: string | null; usuario: Usuario | null }>(leerSesionInicial);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [aviso, setAviso] = useState('');
+
+  const abrirModal = useCallback((mensaje = '') => {
+    setAviso(mensaje);
+    setModalAbierto(true);
+  }, []);
+
+  const cerrarModal = useCallback(() => {
+    setAviso('');
     setModalAbierto(false);
-  };
+  }, []);
+
+  useEffect(() => registrarAlNoAutorizado(() => abrirModal(AVISO_SESION_EXPIRADA)), [abrirModal]);
 
   const autenticar = async (ruta: string, datos: object) => {
     const respuesta = await peticion<RespuestaAuth>(`${API.auth}/${ruta}`, { method: 'POST', body: JSON.stringify(datos) });
-    iniciarSesion(respuesta.usuario, respuesta.token);
+    const { nombre, correo, rol } = respuesta.usuario;
+    const usuario = { nombre, correo, rol };
+    guardar(CLAVE_SESION, usuario);
+    guardar(CLAVE_TOKEN, respuesta.token);
+    setSesion({ token: respuesta.token, usuario });
+    cerrarModal();
   };
 
-  const login = async (correo: string, contrasena: string) => {
-    try {
-      await autenticar('login', { correo, contrasena });
-      return true;
-    } catch (error) {
-      if (error instanceof ErrorApi) return false;
-      const cuenta = cuentas.find(c => c.correo === correo.trim().toLowerCase() && c.contrasena === contrasena);
-      if (!cuenta) return false;
-      iniciarSesion(cuenta, null);
-      return true;
-    }
-  };
+  const login = (correo: string, contrasena: string) =>
+    autenticar('login', { correo: correo.trim(), contrasena });
 
-  const register = async (nombre: string, correo: string, contrasena: string) => {
-    try {
-      await autenticar('register', { nombre, correo, contrasena });
-      return true;
-    } catch (error) {
-      if (error instanceof ErrorApi) return false;
-      const correoNormalizado = correo.trim().toLowerCase();
-      if (cuentas.some(c => c.correo === correoNormalizado)) return false;
-      const nueva: Cuenta = { nombre: nombre.trim(), correo: correoNormalizado, contrasena, rol: 'CLIENTE' };
-      const actualizadas = [...cuentas, nueva];
-      setCuentas(actualizadas);
-      guardar(CLAVE_CUENTAS, actualizadas);
-      iniciarSesion(nueva, null);
-      return true;
-    }
-  };
+  const register = (nombre: string, correo: string, contrasena: string) =>
+    autenticar('register', { nombre: nombre.trim(), correo: correo.trim(), contrasena });
 
   const logout = () => {
-    setUsuario(null);
-    setToken(null);
     guardar(CLAVE_SESION, null);
     guardar(CLAVE_TOKEN, null);
+    setSesion({ token: null, usuario: null });
   };
 
   return (
     <AuthContext.Provider
       value={{
-        usuario,
-        rol: usuario?.rol ?? null,
-        token,
+        usuario: sesion.usuario,
+        rol: sesion.usuario?.rol ?? null,
+        token: sesion.token,
         login,
         register,
         logout,
         modalAbierto,
-        abrirModal: () => setModalAbierto(true),
-        cerrarModal: () => setModalAbierto(false)
+        aviso,
+        abrirModal,
+        cerrarModal
       }}
     >
       {children}

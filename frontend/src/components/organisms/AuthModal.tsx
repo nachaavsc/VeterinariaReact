@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/useAuth';
+import { mensajeDeError, PATRON_EMAIL } from '../../services/api';
 
 type Pestana = 'login' | 'registro';
 
 export const AuthModal: React.FC = () => {
-  const { modalAbierto, cerrarModal, login, register } = useAuth();
+  const { modalAbierto, aviso, cerrarModal, login, register } = useAuth();
   const [pestana, setPestana] = useState<Pestana>('login');
   const [correo, setCorreo] = useState('tengosueno@gmail.com');
   const [contrasena, setContrasena] = useState('1234');
   const [nuevo, setNuevo] = useState({ nombre: '', correo: '', contrasena: '' });
   const [error, setError] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
   if (!modalAbierto) return null;
 
@@ -18,9 +20,27 @@ export const AuthModal: React.FC = () => {
     setError('');
   };
 
+  const ejecutar = async (accion: () => Promise<void>) => {
+    setEnviando(true);
+    setError('');
+    try {
+      await accion();
+      return true;
+    } catch (err) {
+      setError(mensajeDeError(err));
+      return false;
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   const enviarLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!(await login(correo, contrasena))) setError('Correo o contraseña incorrectos');
+    if (!correo.trim() || !contrasena) {
+      setError('Ingresa tu correo y contraseña');
+      return;
+    }
+    await ejecutar(() => login(correo, contrasena));
   };
 
   const enviarRegistro = async (e: React.FormEvent) => {
@@ -29,15 +49,17 @@ export const AuthModal: React.FC = () => {
       setError('Completa todos los campos');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevo.correo.trim())) {
+    if (!PATRON_EMAIL.test(nuevo.correo.trim())) {
       setError('Ingresa un correo válido');
       return;
     }
-    if (!(await register(nuevo.nombre, nuevo.correo, nuevo.contrasena))) {
-      setError('Ya existe una cuenta con ese correo');
+    if (nuevo.contrasena.length < 4) {
+      setError('La contraseña debe tener al menos 4 caracteres');
       return;
     }
-    setNuevo({ nombre: '', correo: '', contrasena: '' });
+    if (await ejecutar(() => register(nuevo.nombre, nuevo.correo, nuevo.contrasena))) {
+      setNuevo({ nombre: '', correo: '', contrasena: '' });
+    }
   };
 
   return (
@@ -65,7 +87,8 @@ export const AuthModal: React.FC = () => {
                 </li>
               </ul>
 
-              {error && <div className="alert alert-danger py-2">{error}</div>}
+              {aviso && !error && <div className="alert alert-warning py-2" role="status">{aviso}</div>}
+              {error && <div className="alert alert-danger py-2" role="alert">{error}</div>}
 
               {pestana === 'login' ? (
                 <form onSubmit={enviarLogin} noValidate>
@@ -77,7 +100,9 @@ export const AuthModal: React.FC = () => {
                     <label htmlFor="loginContrasena" className="form-label">Contraseña</label>
                     <input id="loginContrasena" type="password" className="form-control" value={contrasena} onChange={e => setContrasena(e.target.value)} />
                   </div>
-                  <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                  <button type="submit" className="btn btn-primary w-100" disabled={enviando}>
+                    {enviando ? 'Ingresando...' : 'Ingresar'}
+                  </button>
                   <button
                     type="button"
                     className="btn btn-link btn-sm w-100 mt-2 text-muted"
@@ -103,7 +128,9 @@ export const AuthModal: React.FC = () => {
                     <label htmlFor="registroContrasena" className="form-label">Contraseña</label>
                     <input id="registroContrasena" type="password" className="form-control" value={nuevo.contrasena} onChange={e => setNuevo({ ...nuevo, contrasena: e.target.value })} />
                   </div>
-                  <button type="submit" className="btn btn-primary w-100">Crear cuenta</button>
+                  <button type="submit" className="btn btn-primary w-100" disabled={enviando}>
+                    {enviando ? 'Creando cuenta...' : 'Crear cuenta'}
+                  </button>
                 </form>
               )}
             </div>

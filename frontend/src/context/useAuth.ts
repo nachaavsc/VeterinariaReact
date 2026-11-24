@@ -12,11 +12,12 @@ export interface AuthContextValue {
   usuario: Usuario | null;
   rol: Rol | null;
   token: string | null;
-  login: (correo: string, contrasena: string) => Promise<boolean>;
-  register: (nombre: string, correo: string, contrasena: string) => Promise<boolean>;
+  login: (correo: string, contrasena: string) => Promise<void>;
+  register: (nombre: string, correo: string, contrasena: string) => Promise<void>;
   logout: () => void;
   modalAbierto: boolean;
-  abrirModal: () => void;
+  aviso: string;
+  abrirModal: (aviso?: string) => void;
   cerrarModal: () => void;
 }
 

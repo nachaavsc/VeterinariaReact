@@ -4,17 +4,20 @@ import { CampoFormulario } from '../molecules/CampoFormulario';
 import { Input } from '../atoms/Input';
 import { Select } from '../atoms/Select';
 import { Boton } from '../atoms/Boton';
+import { PATRON_EMAIL } from '../../services/api';
 
 interface FormularioMascotasProps {
   datosIniciales?: MascotaInput;
   alGuardar: (datos: MascotaInput) => void;
   alCancelar?: () => void;
+  enviando?: boolean;
 }
 
 export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
   datosIniciales,
   alGuardar,
-  alCancelar
+  alCancelar,
+  enviando = false
 }) => {
   const [nombre, setNombre] = useState(datosIniciales?.nombre || '');
   const [especie, setEspecie] = useState(datosIniciales?.especie || 'Perro');
@@ -33,7 +36,7 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
     if (!dueno.trim()) nuevosErrores.dueno = 'El nombre del dueño es obligatorio';
     if (!emailDueno.trim()) {
       nuevosErrores.emailDueno = 'El email es obligatorio';
-    } else if (!/\S+@\S+\.\S+/.test(emailDueno)) {
+    } else if (!PATRON_EMAIL.test(emailDueno.trim())) {
       nuevosErrores.emailDueno = 'El formato del email no es válido';
     }
     setErrores(nuevosErrores);
@@ -43,14 +46,23 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validar()) {
-      alGuardar({ nombre, especie, raza, dueno, emailDueno, estado, descripcion });
+      alGuardar({
+        nombre: nombre.trim(),
+        especie,
+        raza: raza.trim(),
+        dueno: dueno.trim(),
+        emailDueno: emailDueno.trim(),
+        estado,
+        descripcion: descripcion.trim(),
+        imagen: datosIniciales?.imagen
+      });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+    <form onSubmit={handleSubmit} className="card p-4 shadow-sm" noValidate>
       <CampoFormulario label="Nombre de la Mascota" htmlFor="nombre" error={errores.nombre}>
-        <Input id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} tieneError={!!errores.nombre} />
+        <Input id="nombre" maxLength={100} value={nombre} onChange={(e) => setNombre(e.target.value)} tieneError={!!errores.nombre} />
       </CampoFormulario>
 
       <CampoFormulario label="Especie" htmlFor="especie">
@@ -68,11 +80,11 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
       </CampoFormulario>
 
       <CampoFormulario label="Raza" htmlFor="raza" error={errores.raza}>
-        <Input id="raza" value={raza} onChange={(e) => setRaza(e.target.value)} tieneError={!!errores.raza} />
+        <Input id="raza" maxLength={100} value={raza} onChange={(e) => setRaza(e.target.value)} tieneError={!!errores.raza} />
       </CampoFormulario>
 
       <CampoFormulario label="Nombre del Dueño" htmlFor="dueno" error={errores.dueno}>
-        <Input id="dueno" value={dueno} onChange={(e) => setDueno(e.target.value)} tieneError={!!errores.dueno} />
+        <Input id="dueno" maxLength={100} value={dueno} onChange={(e) => setDueno(e.target.value)} tieneError={!!errores.dueno} />
       </CampoFormulario>
 
       <CampoFormulario label="Email del Dueño" htmlFor="emailDueno" error={errores.emailDueno}>
@@ -97,14 +109,15 @@ export const FormularioMascotas: React.FC<FormularioMascotasProps> = ({
           id="descripcion"
           className="form-control"
           rows={3}
+          maxLength={500}
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
         />
       </CampoFormulario>
 
       <div className="d-flex gap-2 justify-content-end mt-3">
-        {alCancelar && <Boton type="button" texto="Cancelar" variante="secondary" onClick={alCancelar} />}
-        <Boton type="submit" texto="Guardar Registro" variante="primary" />
+        {alCancelar && <Boton type="button" texto="Cancelar" variante="secondary" onClick={alCancelar} disabled={enviando} />}
+        <Boton type="submit" texto={enviando ? 'Guardando...' : 'Guardar Registro'} variante="primary" disabled={enviando} />
       </div>
     </form>
   );

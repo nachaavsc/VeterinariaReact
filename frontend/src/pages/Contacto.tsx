@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { API, ErrorApi, peticion } from '../services/api';
+import { mensajeDeError, PATRON_EMAIL } from '../services/api';
+import { mensajesApi } from '../services/repositorios';
 
 export const Contacto: React.FC = () => {
   const [enviado, setEnviado] = useState(false);
@@ -14,14 +15,27 @@ export const Contacto: React.FC = () => {
     setTelefono(e.target.value.replace(/[^0-9]/g, ''));
   };
 
+  const validar = () => {
+    if (!nombre.trim() || !email.trim() || !contenido.trim()) return 'Completa tu nombre, correo y consulta.';
+    if (!PATRON_EMAIL.test(email.trim())) return 'Ingrese un correo electrónico válido';
+    if (telefono && (telefono.length < 8 || telefono.length > 12)) return 'El teléfono debe tener entre 8 y 12 dígitos';
+    return '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errorValidacion = validar();
+    setEnviado(false);
+    setError(errorValidacion);
+    if (errorValidacion) return;
     setEnviando(true);
-    setError('');
     try {
-      await peticion(API.mensajes, {
-        method: 'POST',
-        body: JSON.stringify({ nombreRemitente: nombre, email, telefono, asunto: 'Consulta desde el sitio web', contenido })
+      await mensajesApi.crear({
+        nombreRemitente: nombre.trim(),
+        email: email.trim(),
+        telefono,
+        asunto: 'Consulta desde el sitio web',
+        contenido: contenido.trim()
       });
       setNombre('');
       setEmail('');
@@ -30,7 +44,7 @@ export const Contacto: React.FC = () => {
       setEnviado(true);
       setTimeout(() => setEnviado(false), 4000);
     } catch (err) {
-      setError(err instanceof ErrorApi ? err.message : 'No pudimos enviar tu mensaje. Intenta nuevamente más tarde.');
+      setError(mensajeDeError(err));
     } finally {
       setEnviando(false);
     }
@@ -90,7 +104,7 @@ export const Contacto: React.FC = () => {
 
             {error && <div className="alert alert-danger" role="alert">{error}</div>}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="mb-2">
                 <label htmlFor="contactoNombre" className="form-label fw-bold mb-1">Nombre Completo</label>
                 <input
@@ -99,6 +113,7 @@ export const Contacto: React.FC = () => {
                   className="form-control"
                   placeholder="Ej: María González"
                   value={nombre}
+                  maxLength={100}
                   onChange={(e) => setNombre(e.target.value)}
                   required
                 />
@@ -138,6 +153,7 @@ export const Contacto: React.FC = () => {
                   className="form-control"
                   rows={3}
                   value={contenido}
+                  maxLength={1000}
                   onChange={(e) => setContenido(e.target.value)}
                   placeholder="Escribe aquí tus dudas sobre vacunas, consultas médicas o servicios..."
                   required
