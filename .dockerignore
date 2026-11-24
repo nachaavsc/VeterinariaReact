@@ -1,0 +1,7 @@
+.git
+.atl
+.vscode
+.idea
+**/node_modules
+**/target
+**/dist

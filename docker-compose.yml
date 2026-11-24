@@ -1,0 +1,80 @@
+x-backend: &backend
+  restart: on-failure
+  depends_on:
+    mysql:
+      condition: service_healthy
+  environment:
+    SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/veterinaria_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+    SPRING_DATASOURCE_USERNAME: root
+    SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-veterinaria}
+
+services:
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-veterinaria}
+      MYSQL_DATABASE: veterinaria_db
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  usuarios:
+    <<: *backend
+    build: ./backend/Usuarios
+    ports:
+      - "8081:8081"
+
+  mascotas:
+    <<: *backend
+    build: ./backend/Mascotas
+    ports:
+      - "8082:8082"
+
+  servicios:
+    <<: *backend
+    build: ./backend/Servicios
+    ports:
+      - "8083:8083"
+
+  equipo:
+    <<: *backend
+    build: ./backend/Equipo
+    ports:
+      - "8084:8084"
+
+  mensajeria:
+    <<: *backend
+    build: ./backend/Mensajeria
+    ports:
+      - "8085:8085"
+
+  historial:
+    <<: *backend
+    build: ./backend/Historial
+    ports:
+      - "8086:8086"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - usuarios
+      - mascotas
+      - servicios
+      - equipo
+      - mensajeria
+      - historial
+    ports:
+      - "5173:80"
+
+volumes:
+  mysql_data:
